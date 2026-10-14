@@ -1,5 +1,6 @@
 import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
+import { Platform } from "react-native";
 import type { PaginationDTO } from "../Models/dto";
 import { isHtmlResponse, responseErrorMessage } from "../utils/apiError";
 
@@ -8,11 +9,14 @@ const ACCESS_TOKEN_KEY = "accessToken";
 const REFRESH_TOKEN_KEY = "refreshToken";
 const AUTH_PROVIDER_KEY = "authProvider";
 
+const supportsSecureStore = Platform.OS !== "web";
+
 export function paginationQuery({ el, page }: PaginationDTO): string {
     return `?el=${encodeURIComponent(el)}&page=${encodeURIComponent(page)}`;
 }
 
 export async function getStoredAccessToken(): Promise<string | null> {
+    if (!supportsSecureStore) return null;
     return SecureStore.getItemAsync(ACCESS_TOKEN_KEY);
 }
 
@@ -21,6 +25,9 @@ export async function setAuthTokens(
     refresh: string,
     provider: "password" | "google" = "password",
 ): Promise<void> {
+    if (!supportsSecureStore) {
+        throw new Error("Secure authentication tokens are not supported on web.");
+    }
     await Promise.all([
         SecureStore.setItemAsync(ACCESS_TOKEN_KEY, access),
         SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refresh),
@@ -29,6 +36,7 @@ export async function setAuthTokens(
 }
 
 export async function clearAuthTokens(): Promise<void> {
+    if (!supportsSecureStore) return;
     await Promise.all([
         SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY),
         SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY),
@@ -37,6 +45,7 @@ export async function clearAuthTokens(): Promise<void> {
 }
 
 export async function getStoredAuthProvider(): Promise<"password" | "google" | null> {
+    if (!supportsSecureStore) return null;
     const provider = await SecureStore.getItemAsync(AUTH_PROVIDER_KEY);
     return provider === "password" || provider === "google" ? provider : null;
 }
@@ -49,6 +58,7 @@ function requireApiBaseUrl(): string {
 }
 
 async function refreshAccessToken(): Promise<boolean> {
+    if (!supportsSecureStore) return false;
     const refresh = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
     if (!refresh) return false;
 
