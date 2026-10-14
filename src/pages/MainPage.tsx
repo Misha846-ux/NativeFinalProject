@@ -77,34 +77,31 @@ export const MainPage = () => {
         navigation.navigate("Rooms", { hotel });
     }, [navigation]);
 
-    const header = (
-        <>
-            <GeneralSearch cities={cities} countries={countries} onSearch={search} />
-            <View style={styles.sectionTitle}>
-                <SectionHeading>Popular stays</SectionHeading>
-            </View>
-            {loading ? <ActivityIndicator color={theme.purple} style={styles.loader} /> : null}
-            {errors.map((error, index) => (
-                <Text key={`${index}-${error}`} style={styles.error}>{error}</Text>
-            ))}
-            {errors.length > 0 ? (
-                <Pressable onPress={() => void load()} style={styles.retryButton}>
-                    <Text style={styles.retry}>Retry destination and review data</Text>
-                </Pressable>
-            ) : null}
-        </>
-    );
-    const footer = reviews.length
-        ? <UserReviewsContainer reviews={reviews} title="Guest reviews" limit={3} reviewNumberOfLines={3} />
-        : null;
-
     return (
         <PageFrame scroll={false}>
             <HotelsContainer
                 cities={cities}
                 countries={countries}
-                header={header}
-                footer={footer}
+                header={(
+                    <>
+                        <GeneralSearch cities={cities} countries={countries} onSearch={search} />
+                        <View style={styles.sectionTitle}>
+                            <SectionHeading>Popular stays</SectionHeading>
+                        </View>
+                        {loading ? <ActivityIndicator color={theme.purple} style={styles.loader} /> : null}
+                        {errors.map((error, index) => (
+                            <Text key={`${index}-${error}`} style={styles.error}>{error}</Text>
+                        ))}
+                        {errors.length > 0 ? (
+                            <Pressable onPress={() => void load()} style={styles.retryButton}>
+                                <Text style={styles.retry}>Retry destination and review data</Text>
+                            </Pressable>
+                        ) : null}
+                    </>
+                )}
+                footer={reviews.length > 0
+                    ? <UserReviewsContainer reviews={reviews} title="Guest reviews" limit={3} reviewNumberOfLines={3} />
+                    : null}
                 onHotelPress={openHotel}
             />
         </PageFrame>

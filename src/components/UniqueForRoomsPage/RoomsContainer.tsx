@@ -64,20 +64,6 @@ export const RoomsContainer = ({ hotelId, hotelName, filters, header, onRoomSele
         onRoomSelect(room);
     };
 
-    const listHeader = (
-        <View>
-            {header}
-            <SectionHeading>Other rooms in {hotelName}</SectionHeading>
-            {loading ? <ActivityIndicator color={theme.purple} size="large" style={styles.loader} /> : null}
-            {error ? (
-                <View style={styles.errorBox}>
-                    <Text style={styles.error}>{error}</Text>
-                    <Pressable onPress={() => void load()}><Text style={styles.retry}>Try again</Text></Pressable>
-                </View>
-            ) : null}
-        </View>
-    );
-
     return (
         <FlatList
             style={styles.list}
@@ -91,7 +77,19 @@ export const RoomsContainer = ({ hotelId, hotelName, filters, header, onRoomSele
                     onSelect={() => selectRoom(item)}
                 />
             )}
-            ListHeaderComponent={listHeader}
+            ListHeaderComponent={(
+                <View>
+                    {header}
+                    <SectionHeading>Other rooms in {hotelName}</SectionHeading>
+                    {loading ? <ActivityIndicator color={theme.purple} size="large" style={styles.loader} /> : null}
+                    {error ? (
+                        <View style={styles.errorBox}>
+                            <Text style={styles.error}>{error}</Text>
+                            <Pressable onPress={() => void load()}><Text style={styles.retry}>Try again</Text></Pressable>
+                        </View>
+                    ) : null}
+                </View>
+            )}
             ListEmptyComponent={!loading && !error
                 ? <Text style={styles.empty}>{rooms.length ? "Select another available room above." : "No rooms are currently available."}</Text>
                 : null}

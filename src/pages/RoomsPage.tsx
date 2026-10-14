@@ -46,28 +46,6 @@ export const RoomsPage = () => {
         setSelectedRoom(room);
     }, []);
 
-    const header = (
-        <View>
-            {selectedRoom ? (
-                <SelectedRoom
-                    key={selectedRoom.id}
-                    room={selectedRoom}
-                    address={hotel.address}
-                    onBook={() => navigation.navigate("BookingDates", {
-                        hotelId: hotel.id,
-                        room: selectedRoom,
-                        filters,
-                    })}
-                />
-            ) : null}
-            {reviewsLoading ? <ActivityIndicator color={theme.purple} style={{ marginVertical: 12 }} /> : null}
-            {reviewsError ? <Text style={{ color: theme.danger, marginHorizontal: 18, marginBottom: 12 }}>{reviewsError}</Text> : null}
-            {!reviewsLoading && !reviewsError
-                ? <UserReviewsContainer reviews={reviews} title="Guest reviews" limit={5} />
-                : null}
-        </View>
-    );
-
     return (
         <PageFrame title="Choose a room" scroll={false}>
             <RoomsContainer
@@ -75,7 +53,27 @@ export const RoomsPage = () => {
                 hotelId={hotel.id}
                 hotelName={hotel.name}
                 filters={filters}
-                header={header}
+                header={(
+                    <View>
+                        {selectedRoom ? (
+                            <SelectedRoom
+                                key={selectedRoom.id}
+                                room={selectedRoom}
+                                address={hotel.address}
+                                onBook={() => navigation.navigate("BookingDates", {
+                                    hotelId: hotel.id,
+                                    room: selectedRoom,
+                                    filters,
+                                })}
+                            />
+                        ) : null}
+                        {reviewsLoading ? <ActivityIndicator color={theme.purple} style={{ marginVertical: 12 }} /> : null}
+                        {reviewsError ? <Text style={{ color: theme.danger, marginHorizontal: 18, marginBottom: 12 }}>{reviewsError}</Text> : null}
+                        {!reviewsLoading && !reviewsError
+                            ? <UserReviewsContainer reviews={reviews} title="Guest reviews" limit={5} />
+                            : null}
+                    </View>
+                )}
                 onRoomSelect={handleRoomSelect}
             />
         </PageFrame>

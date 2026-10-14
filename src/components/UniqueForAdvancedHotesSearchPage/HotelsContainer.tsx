@@ -47,20 +47,6 @@ export const HotelsContainer = ({ filters, cities, countries, onHotelPress, page
         return () => { active = false; };
     }, [filters]);
 
-    const listHeader = (
-        <View>
-            {pageHeader}
-            <SectionHeading>Stays matching your search</SectionHeading>
-            {loading ? <ActivityIndicator color={theme.purple} size="large" style={styles.loader} /> : null}
-            {error ? (
-                <View style={styles.errorBox}>
-                    <Text style={styles.error}>{error}</Text>
-                    <Pressable onPress={() => void load()}><Text style={styles.retry}>Try again</Text></Pressable>
-                </View>
-            ) : null}
-        </View>
-    );
-
     return (
         <FlatList
             style={styles.list}
@@ -79,7 +65,19 @@ export const HotelsContainer = ({ filters, cities, countries, onHotelPress, page
                     />
                 );
             }}
-            ListHeaderComponent={listHeader}
+            ListHeaderComponent={(
+                <View>
+                    {pageHeader}
+                    <SectionHeading>Stays matching your search</SectionHeading>
+                    {loading ? <ActivityIndicator color={theme.purple} size="large" style={styles.loader} /> : null}
+                    {error ? (
+                        <View style={styles.errorBox}>
+                            <Text style={styles.error}>{error}</Text>
+                            <Pressable onPress={() => void load()}><Text style={styles.retry}>Try again</Text></Pressable>
+                        </View>
+                    ) : null}
+                </View>
+            )}
             ListEmptyComponent={!loading && !error
                 ? <Text style={styles.empty}>No stays matched your search. Try another destination or dates.</Text>
                 : null}

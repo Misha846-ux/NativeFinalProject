@@ -46,19 +46,6 @@ export const HotelsContainer = ({ cities, countries, header, footer, onHotelPres
         return () => { active = false; };
     }, []);
 
-    const listHeader = (
-        <View>
-            {header}
-            {loading ? <ActivityIndicator color={theme.purple} size="large" style={styles.loader} /> : null}
-            {error ? (
-                <View style={styles.errorBox}>
-                    <Text style={styles.error}>{error}</Text>
-                    <Pressable onPress={() => void load()}><Text style={styles.retry}>Try again</Text></Pressable>
-                </View>
-            ) : null}
-        </View>
-    );
-
     return (
         <FlatList
             style={styles.list}
@@ -77,7 +64,18 @@ export const HotelsContainer = ({ cities, countries, header, footer, onHotelPres
                     />
                 );
             }}
-            ListHeaderComponent={listHeader}
+            ListHeaderComponent={(
+                <View>
+                    {header}
+                    {loading ? <ActivityIndicator color={theme.purple} size="large" style={styles.loader} /> : null}
+                    {error ? (
+                        <View style={styles.errorBox}>
+                            <Text style={styles.error}>{error}</Text>
+                            <Pressable onPress={() => void load()}><Text style={styles.retry}>Try again</Text></Pressable>
+                        </View>
+                    ) : null}
+                </View>
+            )}
             ListFooterComponent={footer}
             ListEmptyComponent={!loading && !error ? <Text style={styles.empty}>No stays found.</Text> : null}
         />

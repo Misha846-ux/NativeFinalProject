@@ -3,6 +3,7 @@ import { CommonActions, useNavigation } from "@react-navigation/native";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../Navigation/types";
+import { HOTEL_SEARCH_FILTERS_STORAGE_KEY } from "../../utils/storageKeys";
 import { theme } from "./theme";
 
 type Props = { title?: string };
@@ -12,7 +13,7 @@ export const Header = ({ title }: Props) => {
 
     const goHome = async () => {
         try {
-            await AsyncStorage.clear();
+            await AsyncStorage.removeItem(HOTEL_SEARCH_FILTERS_STORAGE_KEY);
         } catch (error) {
             Alert.alert(
                 "Storage error",

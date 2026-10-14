@@ -11,9 +11,9 @@ import { GeneralSearch } from "../components/GeneralComponents/GeneralSearch";
 import { theme } from "../components/GeneralComponents/theme";
 import { AdvencedSearch } from "../components/UniqueForAdvancedHotesSearchPage/AdvencedSearch";
 import { HotelsContainer } from "../components/UniqueForAdvancedHotesSearchPage/HotelsContainer";
+import { HOTEL_SEARCH_FILTERS_STORAGE_KEY } from "../utils/storageKeys";
 
 type Props = NativeStackScreenProps<RootStackParamList, "AdvancedHotelsSearch">;
-const FILTER_STORAGE_KEY = "hotel_search_filters";
 
 function parseSavedFilters(value: string | null): AdvancedSearchDTO {
     if (!value) return {};
@@ -47,7 +47,7 @@ export const AdvancedHotelsSearchPage = () => {
         let active = true;
         const load = async () => {
             const [storedFilters, cityResult, countryResult] = await Promise.allSettled([
-                AsyncStorage.getItem(FILTER_STORAGE_KEY),
+                AsyncStorage.getItem(HOTEL_SEARCH_FILTERS_STORAGE_KEY),
                 getCities(),
                 getCountries(),
             ]);
@@ -83,9 +83,9 @@ export const AdvancedHotelsSearchPage = () => {
         const save = async () => {
             try {
                 if (Object.keys(filters).length) {
-                    await AsyncStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
+                    await AsyncStorage.setItem(HOTEL_SEARCH_FILTERS_STORAGE_KEY, JSON.stringify(filters));
                 } else {
-                    await AsyncStorage.removeItem(FILTER_STORAGE_KEY);
+                    await AsyncStorage.removeItem(HOTEL_SEARCH_FILTERS_STORAGE_KEY);
                 }
             } catch (error) {
                 setPageError(error instanceof Error ? error.message : "Could not save search settings.");
@@ -101,19 +101,6 @@ export const AdvancedHotelsSearchPage = () => {
     const openHotel = useCallback((hotel: HotelDTO) => {
         navigation.navigate("Rooms", { hotel, filters });
     }, [filters, navigation]);
-    const pageHeader = ready ? (
-        <View>
-            <GeneralSearch
-                key="destination-search"
-                cities={cities}
-                countries={countries}
-                initialFilters={filters}
-                onSearch={updateFilters}
-            />
-            <AdvencedSearch filters={filters} onFilterChange={updateFilters} />
-            {pageError ? <Text style={styles.error}>{pageError}</Text> : null}
-        </View>
-    ) : null;
 
     return (
         <PageFrame title="Search results" scroll={false}>
@@ -123,7 +110,19 @@ export const AdvancedHotelsSearchPage = () => {
                     cities={cities}
                     countries={countries}
                     onHotelPress={openHotel}
-                    pageHeader={pageHeader}
+                    pageHeader={(
+                        <View>
+                            <GeneralSearch
+                                key="destination-search"
+                                cities={cities}
+                                countries={countries}
+                                initialFilters={filters}
+                                onSearch={updateFilters}
+                            />
+                            <AdvencedSearch filters={filters} onFilterChange={updateFilters} />
+                            {pageError ? <Text style={styles.error}>{pageError}</Text> : null}
+                        </View>
+                    )}
                 />
             ) : (
                 <ActivityIndicator color={theme.purple} size="large" style={styles.loading} />

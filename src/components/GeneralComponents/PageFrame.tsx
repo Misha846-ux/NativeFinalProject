@@ -11,16 +11,16 @@ type Props = {
 };
 
 export const PageFrame = ({ children, title, scroll = true }: Props) => {
-    const content = scroll ? (
-        <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.content}>
-            {children}
-        </ScrollView>
-    ) : <View style={[styles.content, styles.fill]}>{children}</View>;
-
     return (
         <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
             <Header title={title} />
-            {content}
+            {scroll ? (
+                <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.content}>
+                    {children}
+                </ScrollView>
+            ) : (
+                <View style={[styles.content, styles.fill]}>{children}</View>
+            )}
         </SafeAreaView>
     );
 };
